@@ -1,0 +1,77 @@
+body {
+  font-family: Arial, Helvetica, sans-serif;
+}
+#simbody {
+  width: 505px;
+  height: 505px;
+  position: absolute;
+  top: 50%;
+  margin-top: -253.5px;
+  left: 50%;
+  margin-left: -253.5px;
+  border: 1px solid red;
+  border-radius: 100%;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  grid-template-rows: 1fr 1fr;
+  grid-template-areas: 
+    'sm4 sm1'
+    'sm3 sm2';
+  justify-items: center;
+  align-items: center;
+}
+#red {
+  grid-area: sm1;
+  background: red;
+  border-top: 35px solid rgb(31,32,31);
+  border-right: 35px solid rgb(31,32,31);
+  border-left: 17.5px solid rgb(31,32,31);
+  border-bottom: 17.5px solid rgb(31,32,31);
+  border-top-right-radius: 100%;
+}
+#blue {
+  grid-area: sm2;
+  background: blue;
+  border-top: 17.5px solid rgb(31,32,31);
+  border-right: 35px solid rgb(31,32,31);
+  border-left: 17.5px solid rgb(31,32,31);
+  border-bottom: 35px solid rgb(31,32,31);
+  border-bottom-right-radius: 100%;
+}
+#yellow {
+  grid-area: sm3;
+  background: yellow;
+  border-top: 17.5px solid rgb(31,32,31);
+  border-right: 17.5px solid rgb(31,32,31);
+  border-left: 35px solid rgb(31,32,31);
+  border-bottom: 35px solid rgb(31,32,31);
+  border-bottom-left-radius: 100%;
+}
+#green {
+  grid-area: sm4;
+  background: green;
+  border-top: 35px solid rgb(31,32,31);
+  border-right: 17.5px solid rgb(31,32,31);
+  border-left: 35px solid rgb(31,32,31);
+  border-bottom: 17.5px solid rgb(31,32,31);
+  border-top-left-radius: 100%;
+}
+.simBtn {
+  width: 200px;
+  height: 200px;
+  
+}
+#simFunc {
+  background: silver;
+  width: 232.5px;
+  height: 232.5px;
+  border: 20px solid rgb(31,32,31);
+  position: absolute;
+  top: 50%;
+  margin-top: -136.25px;
+  left: 50%;
+  margin-left: -136.25px;
+  border-radius: 100%;
+  text-align: center;
+}
+
