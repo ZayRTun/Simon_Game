@@ -1,6 +1,5 @@
 let simBtn = document.getElementById('simbody');
 let simCel = document.querySelectorAll('.simBtn');
-let randCellArr = [];
 let huPattern = [];
 let aiPattern = [];
 let aiPatColor = [];
@@ -94,7 +93,6 @@ function releaseEvent(element) {
 
 
 function startGame() {
-  //onOff = true;
   aiPlays();
 }
 
