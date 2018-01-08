@@ -6,6 +6,7 @@ let aiPattern = [];
 let aiPatColor = [];
 let timer1;
 let timer2;
+let onOff = false;
 const btnFreqs =[220, 293.66, 329.63, 392.00, 110]
 
 //Web audio api
@@ -19,31 +20,34 @@ gainNode.gain.linearRampToValueAtTime(0.0, context.currentTime);
 gainNode.connect(context.destination);
 
 
-
-
 simBtn.addEventListener('mousedown', function(event){
-  huPattern.push(event.target.id);
-
-  function checkHuPlay(plays) {
-    //console.log(plays);
-    for(var i = 0; i < plays.length; i++) {
-      if (plays[i] === aiPatColor[i]) {
-        prsEvent(event.target);
-        if (huPattern.length === aiPatColor.length) {
-          huPattern = [];
-          aiPlays();
-        }
-      } else {
-        osc.frequency.setValueAtTime(btnFreqs[4], context.currentTime);
-        gainNode.gain.setValueAtTime(0.1, context.currentTime);
-        huPattern = [];
-        aiPlaySteps(aiPattern);
-      }
-    }
-  
+  if (onOff === false) {
+    //console.log("Start the game play!");
+  } else {
+    huPattern.push(event.target.id);
+    checkHuPlay(huPattern);
   }
-  checkHuPlay(huPattern);
 });
+
+function checkHuPlay(plays) {
+  //console.log(plays);
+  for(var i = 0; i < plays.length; i++) {
+    if (plays[i] === aiPatColor[i]) {
+      prsEvent(event.target);
+    } else {
+      osc.frequency.setValueAtTime(btnFreqs[4], context.currentTime);
+      gainNode.gain.setValueAtTime(0.1, context.currentTime);
+      huPattern = [];
+      aiPlaySteps(aiPattern);
+      console.log('err1:' + aiPattern);
+    }
+  }
+  if (huPattern.length === aiPatColor.length) {
+    huPattern = [];
+    onOff = false;
+    aiPlays();
+  }
+}
 
 simBtn.addEventListener('mouseup', function(event){
   releaseEvent(event.target);
@@ -73,7 +77,7 @@ function prsEvent(element) {
 }
 
 function releaseEvent(element) {
-  gainNode.gain.linearRampToValueAtTime(0.0, context.currentTime + 0.25);
+  gainNode.gain.linearRampToValueAtTime(0.0, context.currentTime + 0.01);
   if (element.id === 'red') {
     element.style.backgroundColor = 'rgb(148, 14, 14)';
   }
@@ -81,7 +85,7 @@ function releaseEvent(element) {
     element.style.backgroundColor = 'rgb(1, 54, 150)';
   }
   else if (element.id === 'yellow') {
-    element.style.backgroundColor = 'rgb(199, 179, 4)';
+    element.style.backgroundColor = 'rgb(151, 136, 2)';
   }
   else if (element.id === 'green') {
     element.style.backgroundColor = 'rgb(4, 124, 4)';
@@ -90,6 +94,7 @@ function releaseEvent(element) {
 
 
 function startGame() {
+  //onOff = true;
   aiPlays();
 }
 
@@ -99,13 +104,12 @@ function aiPlays() {
   aiPatColor.push(genAiPetColor);
   aiPattern.push(randomCell);
   aiPlaySteps(aiPattern);
-
-  console.log('ai ' + aiPatColor);
 }
 
 function aiPlaySteps(steps) {
+  console.log('error: '+ steps);
   var i = 0;
-  timer1 = setInterval(topTimer, 2000);
+  timer1 = setInterval(topTimer, 1500);
     function topTimer() {
       if (i < steps.length) {
         if (steps[i] === 0) {
@@ -136,14 +140,14 @@ function aiPlaySteps(steps) {
       }
       else if (i === steps.length) {
         clearInterval(timer1);
+        onOff = true;
       }
     }
-
 }
 
 function stepRevert(step) {
   timer2 = setInterval(function(){
-    gainNode.gain.linearRampToValueAtTime(0.0, context.currentTime + 0.10);
+    gainNode.gain.linearRampToValueAtTime(0.0, context.currentTime + 0.01);
     if (step === 0) {
       simCel[step].style.backgroundColor = 'rgb(148, 14, 14)';
       clearInterval(timer2)
@@ -157,7 +161,7 @@ function stepRevert(step) {
       clearInterval(timer2)
     }
     else if (step === 3) {
-      simCel[step].style.backgroundColor = 'rgb(199, 179, 4)';
+      simCel[step].style.backgroundColor = 'rgb(151, 136, 2)';
       clearInterval(timer2)
     }
   },500)
@@ -189,6 +193,7 @@ function generateRandomCell() {
 }
 
 function stopGame() {
+  onOff = false;
   aiPattern = [];
   aiPatColor = [];
   huPattern = [];

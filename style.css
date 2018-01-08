@@ -39,7 +39,7 @@ body {
 }
 #yellow {
   grid-area: sm3;
-  background: rgb(199, 179, 4);
+  background: rgb(151, 136, 2);
   border-top: 17.5px solid rgb(31,32,31);
   border-right: 17.5px solid rgb(31,32,31);
   border-left: 35px solid rgb(31,32,31);
