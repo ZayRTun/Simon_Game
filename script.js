@@ -1,12 +1,13 @@
 let simBtn = document.getElementById('simbody');
 let simCel = document.querySelectorAll('.simBtn');
+let btnTgl = document.getElementById('tglOnOf');
 let huPattern = [];
 let aiPattern = [];
 let aiPatColor = [];
 let timer1;
 let timer2;
 let onOff = false;
-const btnFreqs =[220, 293.66, 329.63, 392.00, 110]
+const btnFreqs =[220, 293.66, 329.63, 392.00, 110];
 
 //Web audio api
 var context = new AudioContext;
@@ -17,6 +18,13 @@ var gainNode = context.createGain();
 osc.connect(gainNode);
 gainNode.gain.linearRampToValueAtTime(0.0, context.currentTime);
 gainNode.connect(context.destination);
+
+
+btnTgl.addEventListener('click', tglFunc);
+
+function tglFunc() {
+  btnTgl.style.left = '24px';
+}
 
 
 simBtn.addEventListener('mousedown', function(event){
