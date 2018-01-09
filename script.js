@@ -7,6 +7,7 @@ let aiPatColor = [];
 let timer1;
 let timer2;
 let onOff = false;
+let onOff1 = false;
 const btnFreqs =[220, 293.66, 329.63, 392.00, 110];
 
 //Web audio api
@@ -23,7 +24,17 @@ gainNode.connect(context.destination);
 btnTgl.addEventListener('click', tglFunc);
 
 function tglFunc() {
-  btnTgl.style.left = '24px';
+  if (onOff1 === false) {
+    btnTgl.style.left = '25px';
+    aiPlays();
+    onOff1 = true;
+  }
+  else if(onOff1 === true) {
+    btnTgl.style.left = '3px';
+    stopGame();
+    onOff1 = false;
+  }
+  
 }
 
 
@@ -115,7 +126,7 @@ function aiPlays() {
 function aiPlaySteps(steps) {
   console.log('error: '+ steps);
   var i = 0;
-  timer1 = setInterval(topTimer, 1500);
+  timer1 = setInterval(topTimer, 1250);
     function topTimer() {
       if (i < steps.length) {
         if (steps[i] === 0) {
@@ -200,6 +211,7 @@ function generateRandomCell() {
 
 function stopGame() {
   onOff = false;
+  clearInterval(timer1);
   aiPattern = [];
   aiPatColor = [];
   huPattern = [];
