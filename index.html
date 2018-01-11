@@ -17,13 +17,17 @@
     <div id="simFunc">
       <h1>Simon</h1>
       <div class="funcBtn">
+        <div id="stat">
+          <span id='statOp'></span>
+        </div>
         <span class="tags" id="of">OFF</span>
         <span class="tags" id="on">ON</span>
         <div id='power'>
           <div id="tglOnOf"></div>
         </div>
-        <button id="startGame" onclick="startGame()">Start</button>
-        <button id="stopGame" onclick="stopGame()">Stop</button>
+        <button id="startGame" onclick="startGame()"></button>
+        <div id="led"></div>
+        <button id="strictMode" onclick="strictMode()"></button>
       </div>  
     </div>
   <script src="script.js"></script>
