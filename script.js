@@ -281,7 +281,7 @@ function restartGame() {
   let timer3 = setInterval(function() {
     aiPlays();
     clearInterval(timer3);
-  }, 100)
+  }, 500)
   
 }
 
