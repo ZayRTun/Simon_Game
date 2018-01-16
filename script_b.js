@@ -23,6 +23,7 @@ let led = document.getElementById('led');
 let strict = false;
 let pTimer;
 let sTimer;
+let timeOut;
 let aiPattern = [];
 let huPattern = [];
 let simObj = {red:0,blue:1,green:2,yellow:3}
@@ -100,13 +101,40 @@ function huPlay(elm) {
     gainNode.gain.setValueAtTime(0.1, context.currentTime);
 
     if (huPattern.length === aiPattern.length) {
-      if (huPattern.length === 3) {
-        console.log('uWin');
+      if (huPattern.length === 6) {
         youWin()
-      } else if (huPattern.length < 3) {
+      } else if (huPattern.length < 6) {
         changeTurn();
       }
     }
+  }
+  function youWin() {
+    let tmCC = 0;
+    let timer1 = setInterval(function() {
+    tmCC++;
+    statOp.innerText = 'you';
+    simCel[0].style.backgroundColor = simArray[0];
+    simCel[1].style.backgroundColor = simArray[1];
+    simCel[2].style.backgroundColor = simArray[2];
+    simCel[3].style.backgroundColor = simArray[3];
+    let timer2 = setInterval(function() {
+      statOp.innerText = 'won';
+      simCel[0].style.backgroundColor = simRevAr[0];
+      simCel[1].style.backgroundColor = simRevAr[1];
+      simCel[2].style.backgroundColor = simRevAr[2];
+      simCel[3].style.backgroundColor = simRevAr[3];
+      clearInterval(timer2);
+      if (tmCC == 5) {
+        clearInterval(timer1);
+        let timer3 = setInterval(function() {
+          prepGameReStart();
+          clearTimer(timer3);
+        }, 1500)
+        
+      }
+    }, 250)
+  }, 500)
+  
 }
 function changeTurn() {
   huPattern = [];
@@ -216,6 +244,7 @@ function aiPlayStepsRevert() {
   if (counter === aiPattern.length) {
     clearTimer(pTimer);
     aiTurn = false;
+    console.log('call');
   }
 }
 
@@ -248,6 +277,33 @@ function powerOff() {
   powerButton.style.left = '3px';
   statOp.innerText = '';
   led.style.backgroundColor = '';
+}
+function tmOut() {
+  statOp.innerText = '!!';
+  osc.frequency.setValueAtTime(110, context.currentTime);
+  gainNode.gain.setValueAtTime(0.1, context.currentTime);
+  let i = 0;
+    let timer1 = setInterval(function() {
+      statOp.innerText = '';
+      let timer2 = setInterval(function() {
+        statOp.innerText = '!!';
+        clearInterval(timer2);
+      }, 200)
+      if (i === 1) {
+        clearInterval(timer1);
+        gainNode.gain.linearRampToValueAtTime(0.0, context.currentTime + 0.01);
+        huPattern = [];
+        counter = 0;
+        if (strict) {
+          aiPattern = [];
+          aiPlays();
+        } else {
+          aiTurn = true;
+          primaryTimer(1250, aiPlaySteps);
+        }
+      }
+      i++;
+    }, 500)
 }
 function stopAll() {
   if (aiTurn === true) {
