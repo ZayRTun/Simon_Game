@@ -35,7 +35,7 @@ let simCel = document.querySelectorAll('.simBtn');
 let simBtn = document.getElementById('simbody');
 
 simBtn.addEventListener('mousedown', function(event){
-  if (powerSwitch === true && aiTurn === false) {
+  if (powerSwitch === true && gameRunning === true && aiTurn === false) {
     let element = simObj[event.target.id];
     huPattern.push(element);
     checkPlay(huPattern, element);
@@ -47,28 +47,51 @@ function checkPlay(pat, elm) {
   for (var i = 0; i < pat.length; i++) {
     if (pat[i] === aiPattern[i]) {
       check = true;
-      // huPlay(elm);
     } else {
       check = false;
       break;
-      // console.log('err');
-      // stepErr(elm);
     }
   }
   if (check) {
+    console.log(pat.length);
     huPlay(elm);
   } else {
-
     stepErr(elm);
   }
 }
 function stepErr(elm) {
+  simBtn.removeEventListener('mouseup', mouseRelease);
+  simCel[elm].style.backgroundColor = simArray[elm];
+  statOp.innerText = '!!';
   osc.frequency.setValueAtTime(110, context.currentTime);
   gainNode.gain.setValueAtTime(0.1, context.currentTime);
-  huPattern = [];
-  counter = 0;
-  primaryTimer(1250, aiPlaySteps);
-
+  erRor(elm)
+}
+function erRor(elm) {
+  let i = 0;
+    let timer1 = setInterval(function() {
+      statOp.innerText = '';
+      let timer2 = setInterval(function() {
+        statOp.innerText = '!!';
+        clearInterval(timer2);
+      }, 200)
+      if (i === 1) {
+        clearInterval(timer1);
+        gainNode.gain.linearRampToValueAtTime(0.0, context.currentTime + 0.01);
+        simCel[elm].style.backgroundColor = simRevAr[elm];
+        simBtn.addEventListener('mouseup', mouseRelease);
+        huPattern = [];
+        counter = 0;
+        if (strict) {
+          aiPattern = [];
+          aiPlays();
+        } else {
+          aiTurn = true;
+          primaryTimer(1250, aiPlaySteps);
+        }
+      }
+      i++;
+    }, 500)
 }
 
 function huPlay(elm) {
@@ -77,23 +100,29 @@ function huPlay(elm) {
     gainNode.gain.setValueAtTime(0.1, context.currentTime);
 
     if (huPattern.length === aiPattern.length) {
-      changeTurn();
+      if (huPattern.length === 3) {
+        console.log('uWin');
+        youWin()
+      } else if (huPattern.length < 3) {
+        changeTurn();
+      }
     }
 }
 function changeTurn() {
   huPattern = [];
-  // onOff = false;
   let timer3 = setInterval(function() {
       clearInterval(timer3);
       aiPlays();
   }, 500)    
 }
 
-simBtn.addEventListener('mouseup', function(event) {
-  let element = simObj[event.target.id];
-  releaseEvent(element);
-});
-function releaseEvent(elm) {
+  simBtn.addEventListener('mouseup', mouseRelease);
+  function mouseRelease() {
+    let element = simObj[event.target.id];
+    releaseEvent(element);
+  }
+
+  function releaseEvent(elm) {
   simCel[elm].style.backgroundColor = simRevAr[elm];
   gainNode.gain.linearRampToValueAtTime(0.0, context.currentTime + 0.01);
 }
@@ -110,9 +139,7 @@ function gameOnOff() {
     statOp.innerText = '--';
   } else {
     powerSwitch = false;
-    //stopGame();
-    powerButton.style.left = '3px';
-    statOp.innerText = '';
+    stopAll();
     powerOff();
   }
 }
@@ -123,8 +150,7 @@ function startGame() {
       gameRunning = true;
       prepGameStart();
     } else {
-      gameRunning = false;
-      prepGameStart()
+      prepGameReStart()
     }
   }
 }
@@ -159,6 +185,10 @@ function prepGameStart() {
     }, 500)
     gameRunning = true;
 }
+function prepGameReStart() {
+  stopAll();
+  prepGameStart();
+}
 
 function aiPlays() {
   counter = 0;
@@ -170,6 +200,7 @@ function aiPlays() {
 //neeed to think that i will do tomorrow
 function aiPlaySteps() {
   if (counter < aiPattern.length) {
+    statOp.innerText = aiPattern.length;
     simCel[aiPattern[counter]].style.backgroundColor = simArray[aiPattern[counter]];
     osc.frequency.setValueAtTime(btnFreqs[aiPattern[counter]], context.currentTime);
     gainNode.gain.setValueAtTime(0.1, context.currentTime);
@@ -208,8 +239,37 @@ function clearTimer(timer) {
   clearInterval(timer);
 }
 function powerOff() {
+  aiPattern = [];
+  huPattern = [];
   gameRunning = false;
+  aiTurn = false;
+  strict = false;
   counter = 0;
+  powerButton.style.left = '3px';
+  statOp.innerText = '';
+  led.style.backgroundColor = '';
+}
+function stopAll() {
+  if (aiTurn === true) {
+    simCel[aiPattern[counter]].style.backgroundColor = simRevAr[aiPattern[counter]];
+    gainNode.gain.linearRampToValueAtTime(0.0, context.currentTime + 0.01);
+    clearTimer(sTimer);
+    clearTimer(pTimer);
+    aiPattern = [];
+    huPattern = [];
+    gameRunning = false;
+    aiTurn = false;
+    counter = 0;
+  } else {
+    gainNode.gain.linearRampToValueAtTime(0.0, context.currentTime + 0.01);
+    clearTimer(sTimer);
+    clearTimer(pTimer);
+    aiPattern = [];
+    huPattern = [];
+    gameRunning = false;
+    aiTurn = false;
+    counter = 0;
+  }
 }
 
 
