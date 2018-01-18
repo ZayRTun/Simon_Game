@@ -169,3 +169,19 @@ button:active,
 button:visited {
   outline: none !important;
 }
+.btnTags {
+  font-weight: bold;
+  font-size: 13px;
+  position: absolute;
+  top: 140px;
+  color: rgb(41, 43, 41)
+}
+#stepTag {
+  left: 30px;
+}
+#startTag {
+  left: 98px;
+}
+#strictTag {
+  left: 153px;
+}

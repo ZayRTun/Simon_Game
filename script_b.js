@@ -36,6 +36,7 @@ let simCel = document.querySelectorAll('.simBtn');
 let simBtn = document.getElementById('simbody');
 
 simBtn.addEventListener('mousedown', function(event){
+  clearInterval(timeOut);
   if (powerSwitch === true && gameRunning === true && aiTurn === false) {
     let element = simObj[event.target.id];
     huPattern.push(element);
@@ -54,7 +55,6 @@ function checkPlay(pat, elm) {
     }
   }
   if (check) {
-    console.log(pat.length);
     huPlay(elm);
   } else {
     stepErr(elm);
@@ -69,6 +69,7 @@ function stepErr(elm) {
   erRor(elm)
 }
 function erRor(elm) {
+  sole.log('error called');
   let i = 0;
     let timer1 = setInterval(function() {
       statOp.innerText = '';
@@ -94,25 +95,26 @@ function erRor(elm) {
       i++;
     }, 500)
 }
-
 function huPlay(elm) {
     simCel[elm].style.backgroundColor = simArray[elm];
     osc.frequency.setValueAtTime(btnFreqs[elm], context.currentTime);
     gainNode.gain.setValueAtTime(0.1, context.currentTime);
-
     if (huPattern.length === aiPattern.length) {
-      if (huPattern.length === 6) {
+      if (huPattern.length === 20) {
         youWin()
-      } else if (huPattern.length < 6) {
+      } else if (huPattern.length < 20) {
         changeTurn();
       }
+    }
+    else if (huPattern.length < aiPattern.length) {
+      tmOut();
     }
   }
   function youWin() {
     let tmCC = 0;
     let timer1 = setInterval(function() {
     tmCC++;
-    statOp.innerText = 'you';
+    statOp.innerText = 'u';
     simCel[0].style.backgroundColor = simArray[0];
     simCel[1].style.backgroundColor = simArray[1];
     simCel[2].style.backgroundColor = simArray[2];
@@ -130,11 +132,9 @@ function huPlay(elm) {
           prepGameReStart();
           clearTimer(timer3);
         }, 1500)
-        
       }
     }, 250)
   }, 500)
-  
 }
 function changeTurn() {
   huPattern = [];
@@ -153,10 +153,7 @@ function changeTurn() {
   function releaseEvent(elm) {
   simCel[elm].style.backgroundColor = simRevAr[elm];
   gainNode.gain.linearRampToValueAtTime(0.0, context.currentTime + 0.01);
-}
-
-
-
+  }
 
 power.addEventListener('click', gameOnOff);
 
@@ -171,7 +168,6 @@ function gameOnOff() {
     powerOff();
   }
 }
-
 function startGame() {
   if (powerSwitch === true) {
     if (gameRunning === false) {
@@ -182,7 +178,6 @@ function startGame() {
     }
   }
 }
-
 function strictMode() {
   if (powerSwitch === true) {
     if (strict === false) {
@@ -194,7 +189,6 @@ function strictMode() {
     }
   }
 }
-
 function prepGameStart() {
   counter = 0;
   let i = 0;
@@ -217,14 +211,12 @@ function prepGameReStart() {
   stopAll();
   prepGameStart();
 }
-
 function aiPlays() {
   counter = 0;
   aiTurn = true;
   aiPattern.push(generateRandomCell()) ;
   primaryTimer(1250, aiPlaySteps);
 }
-
 //neeed to think that i will do tomorrow
 function aiPlaySteps() {
   if (counter < aiPattern.length) {
@@ -235,7 +227,6 @@ function aiPlaySteps() {
     secondaryTimer(500, aiPlayStepsRevert)
   }
 }
-
 function aiPlayStepsRevert() {
   simCel[aiPattern[counter]].style.backgroundColor = simRevAr[aiPattern[counter]];
   gainNode.gain.linearRampToValueAtTime(0.0, context.currentTime + 0.01);
@@ -244,10 +235,9 @@ function aiPlayStepsRevert() {
   if (counter === aiPattern.length) {
     clearTimer(pTimer);
     aiTurn = false;
-    console.log('call');
+    tmOut();
   }
 }
-
 function generateRandomCell() {
   let randNum = Math.random();
   let randImproved = (randNum * 4) + 1;
@@ -279,31 +269,34 @@ function powerOff() {
   led.style.backgroundColor = '';
 }
 function tmOut() {
-  statOp.innerText = '!!';
-  osc.frequency.setValueAtTime(110, context.currentTime);
-  gainNode.gain.setValueAtTime(0.1, context.currentTime);
-  let i = 0;
-    let timer1 = setInterval(function() {
-      statOp.innerText = '';
-      let timer2 = setInterval(function() {
-        statOp.innerText = '!!';
-        clearInterval(timer2);
-      }, 200)
-      if (i === 1) {
-        clearInterval(timer1);
-        gainNode.gain.linearRampToValueAtTime(0.0, context.currentTime + 0.01);
-        huPattern = [];
-        counter = 0;
-        if (strict) {
-          aiPattern = [];
-          aiPlays();
-        } else {
-          aiTurn = true;
-          primaryTimer(1250, aiPlaySteps);
+  timeOut = setInterval(function() {
+    statOp.innerText = '!!';
+    osc.frequency.setValueAtTime(110, context.currentTime);
+    gainNode.gain.setValueAtTime(0.1, context.currentTime);
+    let i = 0;
+      let timer1 = setInterval(function() {
+        statOp.innerText = '';
+        let timer2 = setInterval(function() {
+          statOp.innerText = '!!';
+          clearInterval(timer2);
+        }, 200)
+        if (i === 1) {
+          clearInterval(timer1);
+          gainNode.gain.linearRampToValueAtTime(0.0, context.currentTime + 0.01);
+          huPattern = [];
+          counter = 0;
+          if (strict) {
+            aiPattern = [];
+            aiPlays();
+          } else {
+            aiTurn = true;
+            primaryTimer(1250, aiPlaySteps);
+          }
         }
-      }
-      i++;
-    }, 500)
+        i++;
+      }, 500);
+      clearInterval(timeOut);
+  }, 5000);
 }
 function stopAll() {
   if (aiTurn === true) {
@@ -311,6 +304,7 @@ function stopAll() {
     gainNode.gain.linearRampToValueAtTime(0.0, context.currentTime + 0.01);
     clearTimer(sTimer);
     clearTimer(pTimer);
+    clearTimer(timeOut);
     aiPattern = [];
     huPattern = [];
     gameRunning = false;
@@ -320,6 +314,7 @@ function stopAll() {
     gainNode.gain.linearRampToValueAtTime(0.0, context.currentTime + 0.01);
     clearTimer(sTimer);
     clearTimer(pTimer);
+    clearTimeout(timeOut);
     aiPattern = [];
     huPattern = [];
     gameRunning = false;
