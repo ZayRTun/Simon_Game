@@ -69,7 +69,6 @@ function stepErr(elm) {
   erRor(elm)
 }
 function erRor(elm) {
-  sole.log('error called');
   let i = 0;
     let timer1 = setInterval(function() {
       statOp.innerText = '';
